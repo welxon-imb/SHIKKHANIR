@@ -967,3 +967,81 @@
     max-width: none !important;
   }
 }
+
+/* ==========================================================================
+   SMOOTH MOTION & AMBIENT ANIMATIONS (GPU-Friendly, Respects Reduced Motion)
+   ========================================================================== */
+@keyframes shkFloatSlow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, -4px, 0);
+  }
+}
+
+@keyframes shkCrestGlowPulse {
+  0%, 100% {
+    opacity: 0.78;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes shkHeroFadeRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes shkSoftFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.shk-hero-birds {
+  animation: shkFloatSlow 7s ease-in-out infinite;
+}
+
+.shk-crest-glow {
+  animation: shkCrestGlowPulse 4.2s ease-in-out infinite;
+}
+
+.shk-hero-left-panel {
+  animation: shkHeroFadeRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.shk-hero-stage {
+  animation: shkHeroFadeRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+.shk-location-pill {
+  animation: shkSoftFloat 5s ease-in-out infinite;
+}
+
+.shk-hero-custom-img {
+  animation: shkHeroFadeRise 0.45s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shk-hero-birds,
+  .shk-crest-glow,
+  .shk-hero-left-panel,
+  .shk-hero-stage,
+  .shk-location-pill,
+  .shk-hero-custom-img {
+    animation: none !important;
+  }
+}

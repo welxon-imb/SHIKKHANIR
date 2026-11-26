@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowRight,
   BookOpen,
@@ -80,7 +81,12 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
   return (
     <header ref={wrapRef} className="shk-topbar-header no-print">
       <div className="shk-topbar-container">
-        <div className="shk-topbar-pill">
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, ease: 'easeOut' }}
+          className="shk-topbar-pill"
+        >
           {/* Left & Right Curved Glossy Blue Edge Swooshes matching reference */}
           <svg
             className="shk-topbar-wave-left"
@@ -223,11 +229,18 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
               <path d="M15.8 29.5 C16.2 31.8 17.7 33.2 19.5 33.2 C21.3 33.2 22.8 31.8 23.2 29.5 Z" fill="#04245c" />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
         {/* Slide-down Navigation Drawer (Triggered by Hamburger Icon) */}
+        <AnimatePresence>
         {menuOpen && (
-          <div className="mt-2 rounded-2xl bg-white border border-blue-200 shadow-xl p-4 sm:p-5 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.985 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="mt-2 rounded-2xl bg-white border border-blue-200 shadow-xl p-4 sm:p-5 space-y-4"
+          >
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="text-xs font-bold text-[#04245C]">
                 {user ? `${user.name} (${user.userCode})` : 'শিক্ষানীর — দ্রুত নেভিগেশন'}
@@ -359,12 +372,20 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                 </div>
               </>
             )}
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         {/* Latest Notices Popover (Triggered by Bell Icon) */}
+        <AnimatePresence>
         {bellOpen && (
-          <div className="mt-2 ml-auto max-w-md rounded-2xl bg-white border border-blue-200 shadow-xl p-4 space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="mt-2 ml-auto max-w-md rounded-2xl bg-white border border-blue-200 shadow-xl p-4 space-y-3"
+          >
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <div className="flex items-center gap-2 text-xs font-bold text-[#04245C]">
                 <Megaphone className="w-4 h-4 text-[#f59e0b]" />
@@ -416,14 +437,28 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             )}
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
 
       {/* Universal Notice Detail Modal */}
+      <AnimatePresence>
       {previewNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg border border-slate-200 p-6 shadow-xl">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="bg-white rounded-2xl w-full max-w-lg border border-slate-200 p-6 shadow-xl"
+          >
             <div className="flex items-start justify-between gap-4 mb-3">
               <div>
                 <p className="text-xs font-semibold text-[#1D4ED8]">
@@ -453,9 +488,10 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                 বন্ধ করুন
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 };

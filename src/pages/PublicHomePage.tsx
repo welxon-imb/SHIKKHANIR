@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowRight,
   Award,
@@ -325,7 +326,13 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
         <section className="bg-white py-8 lg:py-10 border-b border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8">
             {/* 6-Item Feature Strip (Matches Reference Feature Row) */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm px-4 py-3.5">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="bg-white border border-slate-200 rounded-2xl shadow-sm px-4 py-3.5"
+            >
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs font-semibold text-[#0F2942]">
                 <div className="flex items-center gap-2 py-1">
                   <BookOpen className="w-4 h-4 text-[#1D4ED8] shrink-0" />
@@ -352,14 +359,20 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                   <span>মেধা তালিকা</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* ============================================================== */}
             {/* ABOVE-THE-FOLD 3-CARD COMMAND BENTO (Matches Reference 3-Panel) */}
             {/* ============================================================== */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               {/* Panel 1: আমাদের কোর্সসমূহ (4 Interactive Class Tiles) */}
-              <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.42, ease: 'easeOut' }}
+                className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-4"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <div className="inline-flex items-center gap-2 bg-[#0F2942] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold">
                     <GraduationCap className="w-4 h-4 text-[#C59B38]" />
@@ -371,17 +384,23 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {classes.map((cls) => {
+                  {classes.map((cls, idx) => {
                     const style = COURSE_TILE_STYLES[cls.id] ?? {
                       badge: cls.shortCode,
                       bg: 'bg-[#0F2942] text-white',
                     };
                     return (
-                      <button
+                      <motion.button
                         key={cls.id}
                         type="button"
+                        initial={{ opacity: 0, scale: 0.94 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.3, delay: idx * 0.05 }}
+                        whileHover={{ y: -4, scale: 1.02 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => onSelectClassDetail(cls.id)}
-                        className={`${style.bg} rounded-2xl p-3.5 text-center flex flex-col items-center justify-between min-h-[112px] transition-transform active:scale-[0.98] shadow-sm`}
+                        className={`${style.bg} rounded-2xl p-3.5 text-center flex flex-col items-center justify-between min-h-[112px] shadow-sm`}
                       >
                         <span className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums">
                           {style.badge}
@@ -392,14 +411,20 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                         <span className="mt-2 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
                           <ArrowRight className="w-3.5 h-3.5" />
                         </span>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Panel 2: সর্বশেষ নোটিশ */}
-              <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.42, delay: 0.08, ease: 'easeOut' }}
+                className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <div className="inline-flex items-center gap-2 bg-[#0F2942] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold">
                     <Megaphone className="w-4 h-4 text-[#C59B38]" />
@@ -427,49 +452,63 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                     </button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Panel 3: দ্রুত প্রবেশ করুন (STRICTLY ZERO ADMIN LINK) */}
-              <div className="lg:col-span-3 bg-[#0F2942] rounded-2xl p-4 sm:p-5 text-white shadow-sm flex flex-col justify-between space-y-3">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.42, delay: 0.14, ease: 'easeOut' }}
+                className="lg:col-span-3 bg-[#0F2942] rounded-2xl p-4 sm:p-5 text-white shadow-sm flex flex-col justify-between space-y-3"
+              >
                 <div className="flex items-center gap-2 text-xs font-bold">
                   <ShieldCheck className="w-4 h-4 text-[#C59B38]" />
                   <span>দ্রুত প্রবেশ করুন</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  <button
+                  <motion.button
                     type="button"
+                    whileHover={{ y: -2, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => onNavigateLogin('STUDENT')}
                     className="min-h-[76px] rounded-xl bg-[#1D4ED8] hover:bg-blue-700 p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-colors"
                   >
                     <BookOpen className="w-5 h-5" />
                     <span className="text-[11px] font-bold leading-tight">স্টুডেন্ট লগইন</span>
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     type="button"
+                    whileHover={{ y: -2, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => onNavigateLogin('TEACHER')}
                     className="min-h-[76px] rounded-xl bg-[#047857] hover:bg-emerald-800 p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-colors"
                   >
                     <UserCheck className="w-5 h-5" />
                     <span className="text-[11px] font-bold leading-tight">টিচার লগইন</span>
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     type="button"
+                    whileHover={{ y: -2, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => onNavigateAdmission()}
                     className="min-h-[76px] rounded-xl bg-[#B47E19] hover:bg-amber-700 p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-colors"
                   >
                     <GraduationCap className="w-5 h-5" />
                     <span className="text-[11px] font-bold leading-tight">অনলাইন ভর্তি</span>
-                  </button>
-                  <a
+                  </motion.button>
+                  <motion.a
                     href="#results"
+                    whileHover={{ y: -2, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     className="min-h-[76px] rounded-xl bg-white/15 hover:bg-white/25 p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-colors"
                   >
                     <Trophy className="w-5 h-5 text-[#C59B38]" />
                     <span className="text-[11px] font-bold leading-tight">মেধা তালিকা</span>
-                  </a>
+                  </motion.a>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Bottom Institutional Stats Banner (Matches Reference Stat Bar) */}
@@ -574,10 +613,15 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-              {classes.map((cls) => (
-                <article
+              {classes.map((cls, idx) => (
+                <motion.article
                   key={cls.id}
-                  className="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-[#1D4ED8] transition-colors"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.12 }}
+                  transition={{ duration: 0.36, delay: idx * 0.06, ease: 'easeOut' }}
+                  whileHover={{ y: -4 }}
+                  className="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-[#1D4ED8] hover:shadow-md transition-all"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
@@ -610,7 +654,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                       ভর্তি
                     </button>
                   </div>
-                </article>
+                </motion.article>
               ))}
             </div>
           </div>
@@ -627,13 +671,21 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {teachers.map((t) => (
-                <article key={t.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col">
+              {teachers.map((t, idx) => (
+                <motion.article
+                  key={t.id}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.12 }}
+                  transition={{ duration: 0.38, delay: idx * 0.06, ease: 'easeOut' }}
+                  whileHover={{ y: -4 }}
+                  className="group bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+                >
                   <div className="aspect-[4/3] sm:aspect-square bg-slate-100 overflow-hidden">
                     <img
                       src={t.avatarUrl}
                       alt={t.name}
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -648,7 +700,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                       অভিজ্ঞতা: {toBengaliDigits(t.experienceYears)} বছর · বিষয়: {t.subjects.join(', ')}
                     </div>
                   </div>
-                </article>
+                </motion.article>
               ))}
             </div>
           </div>
@@ -1109,9 +1161,22 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
       </nav>
 
       {/* Notice Detail Modal */}
+      <AnimatePresence>
       {selectedNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg border border-slate-200 p-6 shadow-xl">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="bg-white rounded-2xl w-full max-w-lg border border-slate-200 p-6 shadow-xl"
+          >
             <div className="flex items-start justify-between gap-4 mb-3">
               <div>
                 <p className="text-xs font-semibold text-[#1D4ED8]">
@@ -1141,9 +1206,10 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 বন্ধ করুন
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 };

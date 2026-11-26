@@ -144,6 +144,27 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '4mb' }));
 
+  const configuredOrigins = (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  app.use('/api', (req, res, next) => {
+    const reqOrigin = req.headers.origin;
+    if (reqOrigin) {
+      if (configuredOrigins.length === 0 || configuredOrigins.includes('*') || configuredOrigins.includes(reqOrigin)) {
+        res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+        res.setHeader('Vary', 'Origin');
+      }
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
+
   // ==========================================================================
   // PUBLIC ENDPOINTS
   // ==========================================================================

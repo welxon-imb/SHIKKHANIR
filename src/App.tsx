@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { HiddenAdminModal } from './components/HiddenAdminModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { TopHeaderBar } from './components/TopHeaderBar';
@@ -6,6 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AdminDashboard } from './dashboards/AdminDashboard';
 import { StudentDashboard } from './dashboards/StudentDashboard';
 import { TeacherDashboard } from './dashboards/TeacherDashboard';
+import { DEFAULT_PUBLIC_BOOTSTRAP } from './data/defaultPublicBootstrap';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useSecretLogoTap } from './hooks/useSecretLogoTap';
 import { AdmissionPage } from './pages/AdmissionPage';
@@ -49,6 +51,8 @@ const AppShell: React.FC = () => {
       const cached = loadOfflinePublicCache<PublicBootstrapData>();
       if (cached) {
         setPublicData(cached.data);
+      } else {
+        setPublicData(DEFAULT_PUBLIC_BOOTSTRAP);
       }
     }
   }, []);
@@ -130,7 +134,7 @@ const AppShell: React.FC = () => {
           onLogout={logout}
         />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-3">
-          <div className="w-16 h-16 rounded-full border border-slate-200 overflow-hidden">
+          <div className="w-16 h-16 rounded-full border border-slate-200 overflow-hidden animate-pulse">
             <img
               src="/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg"
               alt="শিক্ষানীর লোগো"
@@ -164,55 +168,86 @@ const AppShell: React.FC = () => {
       />
 
       {user ? (
-        <>
+        <motion.div
+          key={user.role}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+        >
           {user.role === 'ADMIN' && (
             <AdminDashboard onSettingsUpdated={() => void loadBootstrap()} />
           )}
           {user.role === 'TEACHER' && <TeacherDashboard />}
           {user.role === 'STUDENT' && <StudentDashboard settings={publicData.settings} />}
-        </>
+        </motion.div>
       ) : (
         <>
-          {view === 'home' && (
-            <PublicHomePage
-              data={publicData}
-              selectedClassDetail={selectedClassDetail}
-              onSelectClassDetail={setSelectedClassDetail}
-              onLogoSecretTrigger={() => setShowHiddenAdminModal(true)}
-              onNavigateAdmission={(cid) => {
-                setAdmissionClassId(cid);
-                setView('admission');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              onNavigateLogin={(hint) => {
-                setLoginPortalHint(hint);
-                setView('login');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            {view === 'home' && (
+              <motion.div
+                key="public-home"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+              >
+                <PublicHomePage
+                  data={publicData}
+                  selectedClassDetail={selectedClassDetail}
+                  onSelectClassDetail={setSelectedClassDetail}
+                  onLogoSecretTrigger={() => setShowHiddenAdminModal(true)}
+                  onNavigateAdmission={(cid) => {
+                    setAdmissionClassId(cid);
+                    setView('admission');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onNavigateLogin={(hint) => {
+                    setLoginPortalHint(hint);
+                    setView('login');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              </motion.div>
+            )}
 
-          {view === 'admission' && (
-            <AdmissionPage
-              classes={publicData.classes}
-              batches={publicData.batches}
-              initialClassId={admissionClassId}
-              onBack={() => setView('home')}
-              onGoLogin={() => {
-                setLoginPortalHint(undefined);
-                setView('login');
-              }}
-            />
-          )}
+            {view === 'admission' && (
+              <motion.div
+                key="public-admission"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
+              >
+                <AdmissionPage
+                  classes={publicData.classes}
+                  batches={publicData.batches}
+                  initialClassId={admissionClassId}
+                  onBack={() => setView('home')}
+                  onGoLogin={() => {
+                    setLoginPortalHint(undefined);
+                    setView('login');
+                  }}
+                />
+              </motion.div>
+            )}
 
-          {view === 'login' && (
-            <LoginPage
-              supabaseConfigured={publicData.supabaseConfigured}
-              initialPortalHint={loginPortalHint}
-              onBack={() => setView('home')}
-              onSuccess={() => setView('home')}
-            />
-          )}
+            {view === 'login' && (
+              <motion.div
+                key="public-login"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
+              >
+                <LoginPage
+                  supabaseConfigured={publicData.supabaseConfigured}
+                  initialPortalHint={loginPortalHint}
+                  onBack={() => setView('home')}
+                  onSuccess={() => setView('home')}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {showHiddenAdminModal && (
             <HiddenAdminModal
@@ -233,8 +268,10 @@ const AppShell: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppShell />
-    </AuthProvider>
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
+    </MotionConfig>
   );
 }

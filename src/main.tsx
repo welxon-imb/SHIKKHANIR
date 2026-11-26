@@ -4,12 +4,16 @@ import App from './App.tsx';
 import './index.css';
 
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  registerSW({
-    immediate: true,
-    onOfflineReady() {
-      // Offline cache ready
-    },
-  });
+  try {
+    registerSW({
+      immediate: true,
+      onOfflineReady() {
+        // Offline cache ready
+      },
+    });
+  } catch {
+    // Ignore service worker registration errors in unsupported contexts
+  }
 }
 
 createRoot(document.getElementById('root')!).render(<App />);
