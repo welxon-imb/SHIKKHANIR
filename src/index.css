@@ -1,0 +1,969 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Hind Siliguri', 'Noto Sans Bengali', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-display: 'Hind Siliguri', 'Plus Jakarta Sans', 'Noto Sans Bengali', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #1e293b;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   SHIKKHANIR STICKY CAPSULE TOP BAR (Exact Reference Match Everywhere)
+   ========================================================================== */
+.shk-topbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 45;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(219, 234, 254, 0.85);
+  padding: 6px 10px;
+}
+
+.shk-topbar-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.shk-topbar-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: clamp(50px, 6.2vw, 66px);
+  padding: 0 clamp(10px, 2.2vw, 26px);
+  background: #ffffff;
+  border: 2.5px solid #0047ff;
+  border-radius: 9999px;
+  box-shadow:
+    0 4px 18px rgba(0, 71, 255, 0.24),
+    0 1px 4px rgba(0, 71, 255, 0.14);
+  overflow: hidden;
+  gap: clamp(6px, 1.4vw, 18px);
+}
+
+.shk-topbar-wave-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: clamp(38px, 6.5vw, 76px);
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shk-topbar-wave-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: clamp(38px, 6.5vw, 76px);
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shk-topbar-icon-btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(34px, 5vw, 52px);
+  height: clamp(34px, 5vw, 48px);
+  border: 0;
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 9999px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 140ms ease, background-color 140ms ease;
+}
+
+.shk-topbar-icon-btn:hover {
+  background: rgba(239, 246, 255, 0.96);
+}
+
+.shk-topbar-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.shk-topbar-hamburger-svg {
+  width: clamp(18px, 2.5vw, 26px);
+  height: auto;
+}
+
+.shk-topbar-bell-svg {
+  width: clamp(20px, 2.7vw, 28px);
+  height: auto;
+}
+
+.shk-topbar-divider {
+  position: relative;
+  z-index: 2;
+  width: 2px;
+  height: 62%;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(37, 99, 235, 0) 0%,
+    #1d4ed8 22%,
+    #2563eb 78%,
+    rgba(37, 99, 235, 0) 100%
+  );
+}
+
+.shk-topbar-logo-btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 140ms ease;
+}
+
+.shk-topbar-logo-btn:active {
+  transform: scale(0.96);
+}
+
+.shk-topbar-logo-ring {
+  width: clamp(38px, 5.2vw, 54px);
+  height: clamp(38px, 5.2vw, 54px);
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #04245c;
+  box-shadow: 0 2px 10px rgba(4, 36, 92, 0.2);
+  padding: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shk-topbar-logo-ring img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.shk-topbar-brand-btn {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0 2px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.shk-topbar-brand-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.08rem, 2.7vw, 1.88rem);
+  font-weight: 700;
+  color: #04245c;
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+.shk-topbar-swoosh {
+  width: min(86%, 220px);
+  height: clamp(7px, 1vw, 12px);
+  margin: 0;
+}
+
+.shk-topbar-brand-sub {
+  font-family: var(--font-display);
+  font-size: clamp(0.56rem, 1.25vw, 0.94rem);
+  font-weight: 700;
+  color: #063078;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  .shk-topbar-header {
+    padding: 5px 8px;
+  }
+
+  .shk-topbar-pill {
+    border-width: 2px;
+    height: 48px;
+    padding: 0 9px;
+    gap: 5px;
+  }
+
+  .shk-topbar-divider {
+    width: 1.5px;
+  }
+}
+
+/* Custom Admin-Uploaded Homepage Hero Banner */
+.shk-hero-custom-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e8f3ff 0%, #f8fbff 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.shk-hero-custom-img {
+  width: 100%;
+  max-width: 1440px;
+  height: auto;
+  max-height: clamp(210px, 34vw, 460px);
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+/* ==========================================================================
+   SHIKKHANIR HOMEPAGE HERO SECTION (Reference-Matched Pure CSS3 & Media Queries)
+   ========================================================================== */
+.shk-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 60% 8%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 18% 40%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(175deg, #0b7ae3 0%, #37a5f6 28%, #8bd2ff 58%, #e4f3ff 82%, #ffffff 100%);
+  min-height: clamp(320px, 29vw, 415px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  isolation: isolate;
+}
+
+.shk-hero-sky-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 36% 24% at 45% 24%, rgba(255, 255, 255, 0.72) 0%, transparent 72%),
+    radial-gradient(ellipse 28% 20% at 72% 28%, rgba(255, 255, 255, 0.6) 0%, transparent 74%),
+    radial-gradient(ellipse 46% 32% at 22% 52%, rgba(255, 255, 255, 0.88) 0%, transparent 78%);
+}
+
+.shk-hero-left-arc {
+  position: absolute;
+  top: -12%;
+  left: -14%;
+  width: 44%;
+  height: 112%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 45%, rgba(255, 255, 255, 0.96) 0%, rgba(240, 248, 255, 0.9) 70%, rgba(196, 226, 255, 0.4) 100%);
+  border-right: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.shk-hero-left-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.shk-hero-dots-left {
+  position: absolute;
+  left: 2%;
+  bottom: 24%;
+  width: 96px;
+  height: 96px;
+  background-image: radial-gradient(rgba(16, 89, 212, 0.45) 2px, transparent 2px);
+  background-size: 10px 10px;
+  -webkit-mask-image: radial-gradient(circle at 20% 60%, #000 10%, transparent 75%);
+  mask-image: radial-gradient(circle at 20% 60%, #000 10%, transparent 75%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.shk-hero-dots-bottom {
+  position: absolute;
+  left: 32%;
+  bottom: 14%;
+  width: 120px;
+  height: 54px;
+  background-image: radial-gradient(rgba(14, 72, 178, 0.45) 2px, transparent 2px);
+  background-size: 10px 10px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000 65%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000 65%, transparent);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.shk-hero-campus-bg {
+  position: absolute;
+  right: -1%;
+  bottom: 18%;
+  width: min(46vw, 620px);
+  aspect-ratio: 16 / 9;
+  opacity: 0.72;
+  filter: blur(0.4px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.shk-hero-birds {
+  position: absolute;
+  top: 7%;
+  left: 41%;
+  width: clamp(64px, 7.5vw, 105px);
+  height: auto;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.shk-hero-tabletop {
+  position: absolute;
+  left: 34%;
+  right: 0;
+  bottom: 0;
+  height: 24%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, #e5f1ff 48%, #c7dfff 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.shk-hero-bottom-waves {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 24%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.shk-hero-foliage-tl {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: clamp(82px, 13vw, 200px);
+  pointer-events: none;
+  z-index: 9;
+}
+
+.shk-hero-foliage-bl {
+  position: absolute;
+  bottom: -6px;
+  left: -8px;
+  width: clamp(64px, 10vw, 155px);
+  filter: blur(1.2px);
+  pointer-events: none;
+  z-index: 9;
+}
+
+.shk-hero-foliage-br {
+  position: absolute;
+  bottom: -6px;
+  right: -8px;
+  width: clamp(64px, 10vw, 155px);
+  filter: blur(1.2px);
+  pointer-events: none;
+  z-index: 9;
+}
+
+/* Main Content Stage */
+.shk-hero-inner {
+  position: relative;
+  z-index: 7;
+  width: 100%;
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 14px 28px 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 auto;
+}
+
+/* Top-Right Campus Location Pill */
+.shk-hero-top-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.shk-location-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shk-location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid #d49b1a;
+  border-radius: 9999px;
+  padding: 5px 16px 5px 11px;
+  box-shadow: 0 6px 20px rgba(8, 36, 82, 0.14);
+}
+
+.shk-location-title {
+  display: block;
+  font-size: clamp(0.82rem, 1.15vw, 1.15rem);
+  font-weight: 700;
+  color: #061e42;
+  line-height: 1.15;
+}
+
+.shk-location-sub {
+  display: block;
+  font-size: clamp(0.65rem, 0.85vw, 0.85rem);
+  font-weight: 600;
+  color: #103263;
+  line-height: 1.2;
+}
+
+/* Panoramic 2-Panel Reference Grid (Left Crest+Brand+Slogan | Right Books+Cup) */
+.shk-hero-main-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  align-items: end;
+  gap: clamp(10px, 2vw, 28px);
+  width: 100%;
+  margin-top: auto;
+}
+
+.shk-hero-left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: clamp(10px, 1.8vw, 22px);
+}
+
+.shk-hero-identity-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.6vw, 24px);
+  width: 100%;
+}
+
+/* Left Crest Button (Silent 5-Tap Target) */
+.shk-crest-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(120px, 14vw, 195px);
+  aspect-ratio: 1 / 1;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  flex-shrink: 0;
+  cursor: default;
+  transition: transform 180ms ease;
+}
+
+.shk-crest-btn:active {
+  transform: scale(0.985);
+}
+
+.shk-crest-glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 244, 194, 0.65) 45%, transparent 72%);
+  pointer-events: none;
+}
+
+.shk-crest-seal {
+  position: relative;
+  width: 66%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #d49b1a;
+  box-shadow:
+    0 0 0 2px rgba(255, 232, 148, 0.7),
+    0 10px 22px rgba(6, 26, 58, 0.2);
+  overflow: hidden;
+  padding: 5%;
+  z-index: 2;
+}
+
+.shk-crest-seal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.shk-crest-wreath {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.shk-crest-cap {
+  position: absolute;
+  top: -6%;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 58%;
+  pointer-events: none;
+  z-index: 4;
+  filter: drop-shadow(0 6px 8px rgba(6, 26, 58, 0.35));
+}
+
+/* Vertical Gold Divider */
+.shk-hero-divider {
+  width: 3px;
+  height: clamp(92px, 11vw, 155px);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(212, 155, 26, 0) 0%, #f5cd5c 20%, #c6860f 52%, #f5cd5c 80%, rgba(212, 155, 26, 0) 100%);
+}
+
+/* Brand Typography & Upper Swoosh */
+.shk-hero-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+
+.shk-hero-title-main {
+  margin: 0;
+  font-size: clamp(2rem, 4.4vw, 4.25rem);
+  font-weight: 700;
+  color: #062147;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+}
+
+.shk-hero-title-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: clamp(1.3rem, 2.8vw, 2.7rem);
+  font-weight: 700;
+  color: #064acc;
+  line-height: 1.05;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.shk-hero-swoosh-upper {
+  width: min(94%, 360px);
+  height: 16px;
+  margin-top: 2px;
+}
+
+.shk-hero-slogan-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.shk-hero-slogan {
+  margin: 0;
+  font-size: clamp(0.88rem, 1.45vw, 1.42rem);
+  font-weight: 700;
+  color: #0a2547;
+  line-height: 1.25;
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.95);
+  white-space: nowrap;
+}
+
+.shk-hero-swoosh-lower {
+  width: min(86%, 430px);
+  height: 20px;
+  margin-top: 4px;
+}
+
+/* Right Education Graphics Stage (Books + Cap + Branded Pencil Holder) */
+.shk-hero-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: clamp(6px, 0.9vw, 12px);
+  transform: translateY(4px);
+}
+
+.shk-books-stack {
+  position: relative;
+  width: clamp(150px, 18.5vw, 275px);
+  flex-shrink: 0;
+  filter: drop-shadow(0 12px 14px rgba(8, 32, 74, 0.2));
+}
+
+.shk-pencil-cup {
+  position: relative;
+  width: clamp(68px, 7.6vw, 112px);
+  flex-shrink: 0;
+  filter: drop-shadow(0 10px 12px rgba(8, 32, 74, 0.2));
+}
+
+.shk-cup-logo-seal {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  transform: translateX(-50%);
+  width: 52%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #d4d8e0;
+  padding: 3%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shk-cup-logo-seal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Subtle interactive desktop hover/parallax feel */
+@media (prefers-reduced-motion: no-preference) {
+  .shk-hero-parallax {
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* ==========================================================================
+   LAPTOP (1024px - 1279px) — Compact Screen-Fit Banner
+   ========================================================================== */
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .shk-hero {
+    min-height: clamp(290px, 28vw, 365px);
+  }
+
+  .shk-hero-inner {
+    padding: 12px 22px 28px;
+  }
+
+  .shk-crest-btn {
+    width: clamp(118px, 13.5vw, 158px);
+  }
+
+  .shk-books-stack {
+    width: clamp(150px, 18vw, 225px);
+  }
+
+  .shk-pencil-cup {
+    width: clamp(68px, 7.4vw, 96px);
+  }
+}
+
+/* ==========================================================================
+   TABLET (640px - 1023px) — Same Panoramic Layout, Compact Height
+   ========================================================================== */
+@media (max-width: 1023px) and (min-width: 640px) {
+  .shk-hero {
+    min-height: 255px;
+  }
+
+  .shk-hero-left-arc {
+    width: 52%;
+    left: -14%;
+  }
+
+  .shk-hero-inner {
+    padding: 12px 18px 26px;
+  }
+
+  .shk-hero-main-layout {
+    grid-template-columns: minmax(0, 1.26fr) minmax(0, 0.88fr);
+    gap: 12px;
+  }
+
+  .shk-crest-btn {
+    width: clamp(92px, 14.5vw, 126px);
+  }
+
+  .shk-hero-divider {
+    width: 2px;
+    height: clamp(72px, 11vw, 102px);
+  }
+
+  .shk-hero-title-main {
+    font-size: clamp(1.65rem, 4.4vw, 2.55rem);
+  }
+
+  .shk-hero-title-sub {
+    font-size: clamp(1.05rem, 2.7vw, 1.62rem);
+  }
+
+  .shk-hero-slogan {
+    font-size: clamp(0.76rem, 1.7vw, 1.02rem);
+  }
+
+  .shk-hero-swoosh-upper {
+    height: 11px;
+  }
+
+  .shk-hero-swoosh-lower {
+    height: 14px;
+  }
+
+  .shk-books-stack {
+    width: clamp(128px, 21vw, 175px);
+  }
+
+  .shk-pencil-cup {
+    width: clamp(54px, 8.8vw, 76px);
+  }
+
+  .shk-hero-campus-bg {
+    width: 56vw;
+    bottom: 18%;
+  }
+
+  .shk-hero-tabletop,
+  .shk-hero-bottom-waves {
+    height: 22%;
+  }
+}
+
+/* ==========================================================================
+   MOBILE (< 640px) — Compact Panoramic First-Screen Fit (No Tall Stack!)
+   ========================================================================== */
+@media (max-width: 639px) {
+  .shk-hero {
+    min-height: 198px;
+  }
+
+  .shk-hero-left-arc {
+    width: 64%;
+    left: -18%;
+    top: -12%;
+    height: 110%;
+    opacity: 0.85;
+  }
+
+  .shk-hero-left-edge {
+    width: 11%;
+  }
+
+  .shk-hero-dots-left,
+  .shk-hero-dots-bottom {
+    display: none;
+  }
+
+  .shk-hero-birds {
+    top: 8%;
+    left: 38%;
+    width: 48px;
+    opacity: 0.78;
+  }
+
+  .shk-hero-campus-bg {
+    width: 62vw;
+    right: -4%;
+    bottom: 18%;
+    opacity: 0.6;
+  }
+
+  .shk-hero-foliage-tl {
+    width: 66px;
+  }
+
+  .shk-hero-foliage-bl,
+  .shk-hero-foliage-br {
+    width: 52px;
+  }
+
+  .shk-hero-inner {
+    padding: 8px 10px 22px;
+    gap: 4px;
+  }
+
+  .shk-hero-top-row {
+    justify-content: flex-end;
+    margin-bottom: 0;
+  }
+
+  .shk-location-pill {
+    padding: 2.5px 9px 2.5px 6px;
+    gap: 5px;
+    border-width: 1.5px;
+  }
+
+  .shk-location-pill svg {
+    width: 14px;
+    height: 18px;
+  }
+
+  .shk-location-wrap > svg {
+    width: 58px;
+    height: 9px;
+    margin-top: 1px;
+  }
+
+  .shk-location-title {
+    font-size: 0.66rem;
+  }
+
+  .shk-location-sub {
+    font-size: 0.52rem;
+  }
+
+  .shk-hero-main-layout {
+    grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.84fr);
+    gap: 4px;
+    align-items: end;
+  }
+
+  .shk-hero-left-panel {
+    padding-bottom: 10px;
+  }
+
+  .shk-hero-identity-row {
+    gap: 6px;
+  }
+
+  .shk-crest-btn {
+    width: clamp(56px, 16vw, 72px);
+    min-width: 56px;
+    min-height: 56px;
+  }
+
+  .shk-crest-seal {
+    border-width: 1.5px;
+  }
+
+  .shk-hero-divider {
+    width: 1.5px;
+    height: 48px;
+  }
+
+  .shk-hero-title-main {
+    font-size: clamp(1.18rem, 5.4vw, 1.52rem);
+  }
+
+  .shk-hero-title-sub {
+    font-size: clamp(0.76rem, 3.4vw, 0.98rem);
+    margin-top: 1px;
+  }
+
+  .shk-hero-swoosh-upper {
+    width: 100%;
+    max-width: 118px;
+    height: 8px;
+    margin-top: 1px;
+  }
+
+  .shk-hero-slogan-row {
+    margin-top: 4px;
+  }
+
+  .shk-hero-slogan {
+    font-size: clamp(0.58rem, 2.55vw, 0.76rem);
+  }
+
+  .shk-hero-swoosh-lower {
+    width: 92%;
+    max-width: 175px;
+    height: 9px;
+    margin-top: 2px;
+  }
+
+  .shk-hero-stage {
+    gap: 3px;
+    transform: translateY(2px);
+    justify-content: flex-end;
+  }
+
+  .shk-books-stack {
+    width: clamp(84px, 24vw, 112px);
+  }
+
+  .shk-pencil-cup {
+    width: clamp(36px, 10vw, 48px);
+  }
+
+  .shk-hero-tabletop {
+    left: 28%;
+    height: 22%;
+  }
+
+  .shk-hero-bottom-waves {
+    height: 21%;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .print-sheet {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

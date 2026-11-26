@@ -1,0 +1,8 @@
+{
+  "name": "শিক্ষানীর (SHIKKHANIR)",
+  "description": "শিক্ষানীর কোচিং সেন্টার — অষ্টম, নবম, দশম ও SSC ব্যাচের সম্পূর্ণ স্মার্ট কোচিং ম্যানেজমেন্ট প্ল্যাটফর্ম।",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0F2942"/>
+  <circle cx="256" cy="256" r="196" fill="#FFFFFF"/>
+  <circle cx="256" cy="256" r="182" fill="none" stroke="#C59B38" stroke-width="8"/>
+  <path d="M128 286 L256 206 L384 286" fill="none" stroke="#0F2942" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M148 310 L256 242 L364 310" fill="none" stroke="#1D4ED8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="176" y="336" width="160" height="12" rx="6" fill="#0F2942"/>
+  <text x="256" y="170" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="42" fill="#0F2942">শিক্ষানীর</text>
+  <text x="256" y="392" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="24" letter-spacing="2" fill="#0F2942">SHIKKHANIR</text>
+</svg>

@@ -1,0 +1,53 @@
+import React from 'react';
+
+export const ORIGINAL_LOGO_SRC = '/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg';
+
+interface BrandLogoProps {
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  showText?: boolean;
+  subtitle?: string;
+}
+
+export const BrandLogo: React.FC<BrandLogoProps> = ({
+  size = 'md',
+  showText = true,
+  subtitle,
+}) => {
+  const sizeClass =
+    size === 'sm'
+      ? 'w-9 h-9'
+      : size === 'lg'
+        ? 'w-14 h-14'
+        : size === 'xl'
+          ? 'w-20 h-20'
+          : 'w-11 h-11';
+
+  return (
+    <div className="inline-flex items-center gap-3 shrink-0">
+      <div className={`${sizeClass} aspect-square shrink-0 rounded-full overflow-hidden bg-white border border-slate-200`}>
+        <img
+          src={ORIGINAL_LOGO_SRC}
+          alt="শিক্ষানীর (SHIKKHANIR) অফিসিয়াল লোগো"
+          className="w-full h-full object-contain"
+          referrerPolicy="no-referrer"
+        />
+      </div>
+      {showText && (
+        <div className="leading-tight whitespace-nowrap shrink-0">
+          <span className="block text-lg font-bold tracking-tight text-[#0F2942]">
+            শিক্ষানীর
+          </span>
+          {subtitle ? (
+            <span className="block text-[11px] font-medium text-slate-500">
+              {subtitle}
+            </span>
+          ) : (
+            <span className="block text-[10px] font-semibold tracking-widest text-[#C59B38]">
+              SHIKKHANIR
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
