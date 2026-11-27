@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, CheckCircle2, Upload } from 'lucide-react';
 import { apiFetch } from '../services/api';
+import { submitAdmissionToFirestore } from '../services/firestoreSync';
 import type { AcademicClass, AcademicClassId, AdmissionApplication, Batch } from '../types';
 import { formatTaka, getClassNameBn, isValidBdPhone } from '../utils/academicLogic';
 
@@ -96,6 +97,23 @@ export const AdmissionPage: React.FC<AdmissionPageProps> = ({
         body: JSON.stringify(form),
       });
       setSubmittedApp(res.application);
+      void submitAdmissionToFirestore({
+        id: res.application.id,
+        applicationId: res.application.applicationId,
+        studentName: res.application.studentName,
+        dateOfBirth: res.application.dateOfBirth,
+        phone: res.application.phone,
+        email: res.application.email,
+        guardianName: res.application.guardianName,
+        guardianPhone: res.application.guardianPhone,
+        address: res.application.address,
+        previousSchool: res.application.previousSchool,
+        classId: res.application.classId,
+        batchId: res.application.batchId,
+        academicInfo: res.application.academicInfo,
+      }).catch(() => {
+        // Primary backend submission succeeded; Firestore mirror is optional for guest visitors
+      });
     } catch (err) {
       setError((err as Error).message);
     } finally {

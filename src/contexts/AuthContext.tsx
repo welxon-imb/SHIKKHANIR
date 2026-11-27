@@ -1,12 +1,23 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import type { User as FirebaseUser } from 'firebase/auth';
+import {
+  onFirebaseAuthChanged,
+  signInWithGoogle,
+  signOutFirebase,
+} from '../lib/firebase';
 import { apiFetch, setAuthToken } from '../services/api';
+import { ensureFirebaseUserDocuments } from '../services/firestoreSync';
 import type { AuthUser } from '../types';
 
 interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
+  firebaseUser: FirebaseUser | null;
+  firebaseAuthReady: boolean;
   login: (identifier: string, password: string) => Promise<AuthUser>;
   loginHiddenAdmin: (password: string) => Promise<AuthUser>;
+  connectGoogle: () => Promise<FirebaseUser>;
+  disconnectGoogle: () => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -16,6 +27,21 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [firebaseAuthReady, setFirebaseAuthReady] = useState(false);
+
+  useEffect(() => {
+    const unsub = onFirebaseAuthChanged((fbUser) => {
+      setFirebaseUser(fbUser);
+      setFirebaseAuthReady(true);
+      if (fbUser) {
+        void ensureFirebaseUserDocuments(fbUser).catch(() => {
+          // Non-fatal during initial auth sync; permission errors are logged cleanly
+        });
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const login = useCallback(async (identifier: string, password: string) => {
     const data = await apiFetch<{ token: string; user: AuthUser }>('/api/auth/login', {
@@ -39,6 +65,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data.user;
   }, []);
 
+  const connectGoogle = useCallback(async () => {
+    const fbUser = await signInWithGoogle();
+    await ensureFirebaseUserDocuments(fbUser);
+    return fbUser;
+  }, []);
+
+  const disconnectGoogle = useCallback(async () => {
+    await signOutFirebase();
+  }, []);
+
   const logout = useCallback(() => {
     setAuthToken(null);
     setToken(null);
@@ -52,7 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, loginHiddenAdmin, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        firebaseUser,
+        firebaseAuthReady,
+        login,
+        loginHiddenAdmin,
+        connectGoogle,
+        disconnectGoogle,
+        logout,
+        refreshUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

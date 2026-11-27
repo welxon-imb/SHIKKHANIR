@@ -33,7 +33,9 @@ import { MessagingCenter } from '../components/MessagingCenter';
 import { PrintableMarksheet } from '../components/PrintableMarksheet';
 import { PrintableReceipt } from '../components/PrintableReceipt';
 import { useAuth } from '../contexts/AuthContext';
+import { firebaseProjectId } from '../lib/firebase';
 import { apiFetch } from '../services/api';
+import { publishPublicBootstrapToFirestore } from '../services/firestoreSync';
 import type {
   AcademicClass,
   AcademicClassId,
@@ -114,7 +116,7 @@ type AdminTab =
 export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
   onSettingsUpdated,
 }) => {
-  const { user, logout } = useAuth();
+  const { user, firebaseUser, connectGoogle, disconnectGoogle, logout } = useAuth();
   const [tab, setTab] = useState<AdminTab>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [data, setData] = useState<AdminOverviewData | null>(null);
@@ -123,6 +125,7 @@ export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [syncingFirebase, setSyncingFirebase] = useState(false);
 
   // Filters & Pagination
   const [stuSearch, setStuSearch] = useState('');
@@ -484,6 +487,28 @@ export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
     notify('নতুন নোটিশ প্রকাশিত হয়েছে।');
   };
 
+  const syncBootstrapToCloud = async (overrideSettings?: WebsiteSettings) => {
+    if (!data) return;
+    setSyncingFirebase(true);
+    try {
+      await publishPublicBootstrapToFirestore({
+        settings: overrideSettings ?? settingsDraft ?? data.settings,
+        classes: data.classes,
+        batches: data.batches,
+        subjects: data.subjects,
+        teachers: data.teachers.filter((t) => t.isActive),
+        notices: data.notices,
+        exams: data.exams.filter((e) => e.isPublished),
+        results: data.results.filter((r) => r.isPublished),
+      });
+      notify(`Firebase (${firebaseProjectId})-এ পাবলিক ডেটা ও হিরো ব্যানার সিঙ্ক হয়েছে।`);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Firebase সিঙ্ক করা যায়নি।');
+    } finally {
+      setSyncingFirebase(false);
+    }
+  };
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!settingsDraft) return;
@@ -491,6 +516,22 @@ export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
       method: 'PATCH',
       body: JSON.stringify(settingsDraft),
     });
+    if (firebaseUser?.emailVerified) {
+      try {
+        await publishPublicBootstrapToFirestore({
+          settings: settingsDraft,
+          classes: data?.classes ?? [],
+          batches: data?.batches ?? [],
+          subjects: data?.subjects ?? [],
+          teachers: (data?.teachers ?? []).filter((t) => t.isActive),
+          notices: data?.notices ?? [],
+          exams: (data?.exams ?? []).filter((ex) => ex.isPublished),
+          results: (data?.results ?? []).filter((r) => r.isPublished),
+        });
+      } catch {
+        // Keep local save successful even if Firebase sync fails
+      }
+    }
     await loadAll();
     onSettingsUpdated?.();
     notify('ওয়েবসাইট সেটিংস সফলভাবে সংরক্ষিত হয়েছে।');
@@ -1612,7 +1653,67 @@ export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
                   <input type="text" value={settingsDraft.address} onChange={(e) => setSettingsDraft({ ...settingsDraft, address: e.target.value })} className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300" />
                 </div>
               </div>
-              <button type="submit" className="px-6 py-2.5 rounded-lg bg-[#0F2942] text-white text-sm font-semibold">সেটিংস সংরক্ষণ</button>
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="submit" className="px-6 py-2.5 rounded-lg bg-[#0F2942] text-white text-sm font-semibold">সেটিংস সংরক্ষণ</button>
+              </div>
+
+              {/* Firebase Cloud Sync Panel */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#0F2942]">
+                      Firebase ক্লাউড সিঙ্ক ({firebaseProjectId})
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      হোমপেজের ব্যানার ছবি, নোটিশ, শ্রেণি ও ফলাফল Firebase Firestore-এ সংরক্ষণ করুন।
+                    </p>
+                  </div>
+                  {firebaseUser ? (
+                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+                      যুক্ত: {firebaseUser.email}
+                    </span>
+                  ) : (
+                    <span className="text-xs font-medium text-slate-500">Google অ্যাকাউন্ট সংযুক্ত নয়</span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2.5">
+                  {!firebaseUser ? (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await connectGoogle();
+                          notify('Google অ্যাকাউন্ট Firebase-এর সাথে যুক্ত হয়েছে।');
+                        } catch (err) {
+                          setErrorMsg(err instanceof Error ? err.message : 'Google লগইন সম্পন্ন হয়নি।');
+                        }
+                      }}
+                      className="px-4 py-2 rounded-lg bg-[#1D4ED8] hover:bg-blue-800 text-white text-xs font-semibold"
+                    >
+                      Google দিয়ে Firebase-এ যুক্ত হোন
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        disabled={syncingFirebase}
+                        onClick={() => void syncBootstrapToCloud()}
+                        className="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white text-xs font-semibold"
+                      >
+                        {syncingFirebase ? 'সিঙ্ক হচ্ছে...' : 'এখনই Firebase-এ সিঙ্ক করুন'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void disconnectGoogle()}
+                        className="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold"
+                      >
+                        Google বিচ্ছিন্ন করুন
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </form>
           )}
 

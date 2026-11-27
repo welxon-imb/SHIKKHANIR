@@ -10,11 +10,16 @@ import { StudentDashboard } from './dashboards/StudentDashboard';
 import { TeacherDashboard } from './dashboards/TeacherDashboard';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useSecretLogoTap } from './hooks/useSecretLogoTap';
+import { initFirebaseAnalytics, testFirestoreConnection } from './lib/firebase';
 import { isSupabaseConfigured } from './lib/supabase';
 import { AdmissionPage } from './pages/AdmissionPage';
 import { LoginPage } from './pages/LoginPage';
 import { PublicHomePage, type PublicBootstrapData } from './pages/PublicHomePage';
 import { apiFetch } from './services/api';
+import {
+  fetchPublicBootstrapFromFirestore,
+  subscribePublicBootstrap,
+} from './services/firestoreSync';
 import type { AcademicClassId } from './types';
 import { isValidBootstrapPayload, normalizePublicBootstrapData } from './utils/bootstrapNormalizer';
 import {
@@ -57,13 +62,38 @@ const AppShell: React.FC = () => {
       setPublicData(normalized);
       saveOfflinePublicCache(normalized);
     } catch {
+      try {
+        const cloudData = await fetchPublicBootstrapFromFirestore();
+        if (cloudData && isValidBootstrapPayload(cloudData)) {
+          const normalized = normalizePublicBootstrapData(cloudData, isSupabaseConfigured);
+          setPublicData(normalized);
+          saveOfflinePublicCache(normalized);
+          return;
+        }
+      } catch {
+        // Fall back safely to cached/default public bootstrap
+      }
       const cached = loadOfflinePublicCache<unknown>();
       setPublicData(normalizePublicBootstrapData(cached?.data, isSupabaseConfigured));
     }
   }, []);
 
   useEffect(() => {
+    void testFirestoreConnection();
+    void initFirebaseAnalytics();
     void loadBootstrap();
+
+    const unsubscribe = subscribePublicBootstrap((cloudData) => {
+      if (isValidBootstrapPayload(cloudData)) {
+        const normalized = normalizePublicBootstrapData(cloudData, isSupabaseConfigured);
+        setPublicData(normalized);
+        saveOfflinePublicCache(normalized);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [loadBootstrap]);
 
   useEffect(() => {

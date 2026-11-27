@@ -1,0 +1,183 @@
+{
+  "entities": {
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Verified administrator role record in Firestore.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 160 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["ADMIN"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "name", "role", "createdAt", "updatedAt"]
+    },
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Non-PII public profile document for an authenticated Firebase user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "photoUrl": { "type": "string", "maxLength": 500 },
+        "role": { "type": "string", "enum": ["ADMIN", "TEACHER", "STUDENT"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "role", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated private PII belonging to an authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "userCode": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "createdAt", "updatedAt"]
+    },
+    "PublicBootstrapSnapshot": {
+      "title": "PublicBootstrapSnapshot",
+      "description": "Public website configuration, academic catalog, notices, and published exam results.",
+      "type": "object",
+      "properties": {
+        "settings": { "type": "object", "description": "Website settings including heroBannerUrl, titles, and institute stats." },
+        "classes": { "type": "array", "description": "Public academic class programs." },
+        "batches": { "type": "array", "description": "Public batch schedules." },
+        "subjects": { "type": "array", "description": "Subject syllabus metadata." },
+        "teachers": { "type": "array", "description": "Public active faculty profiles." },
+        "notices": { "type": "array", "description": "Published public notices." },
+        "exams": { "type": "array", "description": "Published exams." },
+        "results": { "type": "array", "description": "Published merit results." },
+        "updatedByUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "settings",
+        "classes",
+        "batches",
+        "subjects",
+        "teachers",
+        "notices",
+        "exams",
+        "results",
+        "updatedByUid",
+        "updatedAt"
+      ]
+    },
+    "NoticeItem": {
+      "title": "NoticeItem",
+      "description": "Individual public notice published by an administrator.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 240 },
+        "description": { "type": "string", "minLength": 2, "maxLength": 4000 },
+        "type": {
+          "type": "string",
+          "enum": [
+            "সাধারণ নোটিশ",
+            "জরুরি নোটিশ",
+            "পরীক্ষার নোটিশ",
+            "ভর্তি বিজ্ঞপ্তি",
+            "ছুটির নোটিশ",
+            "ক্লাসের নোটিশ"
+          ]
+        },
+        "date": { "type": "string", "maxLength": 32 },
+        "targetClassId": { "type": "string", "maxLength": 32 },
+        "targetBatchId": { "type": "string", "maxLength": 64 },
+        "isPinned": { "type": "boolean" },
+        "publishedBy": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "authorUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "title",
+        "description",
+        "type",
+        "date",
+        "targetClassId",
+        "isPinned",
+        "publishedBy",
+        "authorUid",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdmissionRequest": {
+      "title": "AdmissionRequest",
+      "description": "Authenticated student online admission application with guardian contact info.",
+      "type": "object",
+      "properties": {
+        "applicationId": { "type": "string", "minLength": 3, "maxLength": 40 },
+        "applicantUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "studentName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "dateOfBirth": { "type": "string", "minLength": 4, "maxLength": 24 },
+        "phone": { "type": "string", "minLength": 11, "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 160 },
+        "guardianName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "guardianPhone": { "type": "string", "minLength": 11, "maxLength": 20 },
+        "address": { "type": "string", "minLength": 2, "maxLength": 300 },
+        "previousSchool": { "type": "string", "minLength": 2, "maxLength": 200 },
+        "classId": { "type": "string", "enum": ["class-8", "class-9", "class-10", "ssc-batch"] },
+        "batchId": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "academicInfo": { "type": "string", "maxLength": 600 },
+        "status": { "type": "string", "enum": ["Submitted", "Under Review", "Approved", "Rejected"] },
+        "reviewNotes": { "type": "string", "maxLength": 500 },
+        "approvedStudentCode": { "type": "string", "maxLength": 40 },
+        "assignedRoll": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "applicationId",
+        "applicantUid",
+        "studentName",
+        "dateOfBirth",
+        "phone",
+        "guardianName",
+        "guardianPhone",
+        "address",
+        "previousSchool",
+        "classId",
+        "batchId",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Trusted administrator records used for RBAC verification."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Public non-PII user profiles keyed by Firebase Auth UID."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Split-collection private PII (email, phone, userCode) isolated to owner and admins."
+    },
+    "/public_data/{docId}": {
+      "schema": { "$ref": "#/entities/PublicBootstrapSnapshot" },
+      "description": "Published public website configuration and academic catalog snapshots."
+    },
+    "/notices/{noticeId}": {
+      "schema": { "$ref": "#/entities/NoticeItem" },
+      "description": "Published academic notices readable by visitors and managed by admins."
+    },
+    "/admissions/{admissionId}": {
+      "schema": { "$ref": "#/entities/AdmissionRequest" },
+      "description": "Student admission applications owned by the submitting user and reviewed by admins."
+    }
+  }
+}
