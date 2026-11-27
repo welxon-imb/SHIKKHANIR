@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, KeyRound, Lock, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Eye, EyeOff, KeyRound, Lock, ShieldCheck } from 'lucide-react';
 import { BrandLogo } from '../components/BrandLogo';
 import { useAuth } from '../contexts/AuthContext';
-import { apiFetch } from '../services/api';
+import { API_BASE_URL, apiFetch } from '../services/api';
+import { getAuthEnvironmentMode } from '../utils/apiDiagnostics';
 
 interface LoginPageProps {
   supabaseConfigured: boolean;
+  backendConnected?: boolean;
   initialPortalHint?: 'TEACHER' | 'STUDENT';
   onBack: () => void;
   onSuccess: () => void;
@@ -13,11 +15,17 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   supabaseConfigured,
+  backendConnected = true,
   initialPortalHint,
   onBack,
   onSuccess,
 }) => {
   const { login } = useAuth();
+  const authMode = getAuthEnvironmentMode({
+    supabaseConfigured,
+    backendConnected,
+    apiBase: API_BASE_URL,
+  });
   const [mode, setMode] = useState<'login' | 'forgot' | 'reset'>('login');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -118,8 +126,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <ArrowLeft className="w-4 h-4" />
             হোমপেজ
           </button>
-          <span className="text-xs font-medium text-slate-500">
-            {supabaseConfigured ? 'Supabase Auth সক্রিয়' : 'লোকাল সার্ভার সেশন (Demo Seed)'}
+          <span
+            className={`text-xs font-medium ${
+              authMode.mode === 'STATIC_ONLY' ? 'text-amber-700' : 'text-slate-500'
+            }`}
+          >
+            {authMode.badgeLabel}
           </span>
         </div>
 
@@ -141,6 +153,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               Teacher এবং অনুমোদিত Student একই পোর্টাল থেকে প্রবেশ করবেন
             </p>
           </div>
+
+          {!backendConnected && (
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold">ব্যাকএন্ড সার্ভার সংযুক্ত নয়</p>
+                <p className="text-[11px] leading-relaxed">
+                  এই স্ট্যাটিক সাইটে API সার্ভার (`server.ts`) যুক্ত না থাকায় লগইন ও পাসওয়ার্ড রিসেট কাজ করবে না (HTTP 405)। Node ব্যাকএন্ড ডিপ্লয় করে <code className="font-mono">VITE_API_BASE_URL</code> সেট করুন।
+                </p>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
@@ -298,8 +322,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </form>
           )}
 
-          {/* Clearly marked Demo Credentials for Teacher & Student testing */}
-          {!supabaseConfigured && (
+          {/* Clearly marked Demo Credentials for Teacher & Student testing in connected non-production mode */}
+          {!supabaseConfigured && backendConnected && (
             <div className="pt-4 border-t border-slate-200 space-y-2.5">
               <p className="text-[11px] font-semibold text-slate-500">
                 ডেমো পরীক্ষামূলক প্রবেশ (Teacher / Student):

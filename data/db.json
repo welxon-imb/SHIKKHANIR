@@ -3316,6 +3316,22 @@
   ],
   "activityLogs": [
     {
+      "id": "log-1c684063",
+      "actorName": "মোঃ মাহবুবুর রহমান",
+      "actorRole": "TEACHER",
+      "action": "সফল লগইন",
+      "details": "আইডি: TCH-01",
+      "timestamp": "2026-11-27T10:00:20.998Z"
+    },
+    {
+      "id": "log-98941d75",
+      "actorName": "মোঃ মাহবুবুর রহমান",
+      "actorRole": "TEACHER",
+      "action": "সফল লগইন",
+      "details": "আইডি: TCH-01",
+      "timestamp": "2026-11-27T09:59:45.623Z"
+    },
+    {
       "id": "log-a5371df7",
       "actorName": "মোঃ খাইরুল বাশার (পরিচালক)",
       "actorRole": "ADMIN",
@@ -3552,5 +3568,10 @@
     },
     "heroBannerUrl": ""
   },
-  "resetCodes": {}
+  "resetCodes": {
+    "usr-tch-1": {
+      "code": "993758",
+      "expiresAt": 1795774521020
+    }
+  }
 }

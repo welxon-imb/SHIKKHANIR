@@ -6,11 +6,13 @@ import { ApiError } from '../services/api';
 import { toBengaliDigits } from '../utils/academicLogic';
 
 interface HiddenAdminModalProps {
+  backendConnected?: boolean;
   onClose: () => void;
   onAuthenticated: () => void;
 }
 
 export const HiddenAdminModal: React.FC<HiddenAdminModalProps> = ({
+  backendConnected = true,
   onClose,
   onAuthenticated,
 }) => {
@@ -95,6 +97,12 @@ export const HiddenAdminModal: React.FC<HiddenAdminModalProps> = ({
           <div className="flex justify-center">
             <BrandLogo size="lg" showText={false} />
           </div>
+
+          {!backendConnected && (
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+              ব্যাকএন্ড API সার্ভার সংযুক্ত না থাকায় এই স্ট্যাটিক সাইট থেকে অ্যাডমিন যাচাইকরণ কাজ করবে না (HTTP 405)।
+            </div>
+          )}
 
           {errorMsg && (
             <div

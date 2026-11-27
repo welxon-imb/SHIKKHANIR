@@ -43,6 +43,7 @@ const AppShell: React.FC = () => {
   const [showHiddenAdminModal, setShowHiddenAdminModal] = useState(false);
   const [admissionClassId, setAdmissionClassId] = useState<AcademicClassId | undefined>(undefined);
   const [selectedClassDetail, setSelectedClassDetail] = useState<AcademicClassId | null>(null);
+  const [backendConnected, setBackendConnected] = useState<boolean>(true);
   const [pendingCount, setPendingCount] = useState(() => getPendingQueue().length);
   const [syncing, setSyncing] = useState(false);
 
@@ -61,7 +62,9 @@ const AppShell: React.FC = () => {
       const normalized = normalizePublicBootstrapData(data, isSupabaseConfigured);
       setPublicData(normalized);
       saveOfflinePublicCache(normalized);
+      setBackendConnected(true);
     } catch {
+      setBackendConnected(false);
       try {
         const cloudData = await fetchPublicBootstrapFromFirestore();
         if (cloudData && isValidBootstrapPayload(cloudData)) {
@@ -243,6 +246,7 @@ const AppShell: React.FC = () => {
               >
                 <LoginPage
                   supabaseConfigured={publicData.supabaseConfigured}
+                  backendConnected={backendConnected}
                   initialPortalHint={loginPortalHint}
                   onBack={() => setView('home')}
                   onSuccess={() => setView('home')}
@@ -253,6 +257,7 @@ const AppShell: React.FC = () => {
 
           {showHiddenAdminModal && (
             <HiddenAdminModal
+              backendConnected={backendConnected}
               onClose={() => setShowHiddenAdminModal(false)}
               onAuthenticated={() => {
                 setShowHiddenAdminModal(false);

@@ -144,25 +144,44 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '4mb' }));
 
-  const configuredOrigins = (process.env.CORS_ORIGIN || '')
-    .split(',')
-    .map((s) => s.trim())
+  const configuredOrigins = [
+    ...(process.env.CORS_ORIGIN || '').split(','),
+    process.env.APP_URL || '',
+  ]
+    .map((s) => s.trim().replace(/\/+$/, ''))
     .filter(Boolean);
+  const isProdMode = process.env.NODE_ENV === 'production';
+
   app.use('/api', (req, res, next) => {
-    const reqOrigin = req.headers.origin;
+    const reqOrigin = req.headers.origin?.trim().replace(/\/+$/, '');
     if (reqOrigin) {
-      if (configuredOrigins.length === 0 || configuredOrigins.includes('*') || configuredOrigins.includes(reqOrigin)) {
+      const hostOrigin = req.headers.host ? `${req.protocol}://${req.headers.host}`.replace(/\/+$/, '') : '';
+      const isAllowed =
+        configuredOrigins.includes(reqOrigin) ||
+        (hostOrigin !== '' && reqOrigin === hostOrigin) ||
+        (!isProdMode && configuredOrigins.length === 0);
+      if (isAllowed) {
         res.setHeader('Access-Control-Allow-Origin', reqOrigin);
         res.setHeader('Vary', 'Origin');
       }
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Max-Age', '86400');
     if (req.method === 'OPTIONS') {
       res.status(204).end();
       return;
     }
     next();
+  });
+
+  app.get('/api/health', (_req, res) => {
+    res.json({
+      ok: true,
+      service: 'shikkhanir-api',
+      mode: isProdMode ? 'production' : 'development',
+      timestamp: new Date().toISOString(),
+    });
   });
 
   // ==========================================================================
@@ -406,6 +425,16 @@ async function startServer() {
   });
 
   app.post('/api/auth/forgot-password', (req, res) => {
+    const attemptKey = getClientAttemptKey(req, 'pwd-reset');
+    const rateCheck = userAttemptLimiter.check(attemptKey);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        error: `অতিরিক্ত অনুরোধের কারণে সাময়িকভাবে স্থগিত। ${rateCheck.retryAfterSeconds} সেকেন্ড পর আবার চেষ্টা করুন।`,
+        retryAfterSeconds: rateCheck.retryAfterSeconds,
+      });
+      return;
+    }
+
     const { identifier } = req.body ?? {};
     if (!identifier) {
       res.status(400).json({ error: 'ইউজার আইডি, ইমেইল অথবা মোবাইল নম্বর দিন।' });
@@ -422,6 +451,7 @@ async function startServer() {
           normalizeBdPhone(u.phone) === normalizedPhone)
     );
     if (!user) {
+      userAttemptLimiter.recordFailure(attemptKey);
       res.status(404).json({ error: 'এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি।' });
       return;
     }
@@ -430,13 +460,25 @@ async function startServer() {
     saveDb(db);
     res.json({
       ok: true,
-      message: 'পাসওয়ার্ড রিসেট কোড তৈরি হয়েছে।',
-      demoResetCode: code,
+      message: isProdMode
+        ? 'পাসওয়ার্ড রিসেট অনুরোধ গৃহীত হয়েছে। অফিস অ্যাডমিন বা নিবন্ধিত মাধ্যম থেকে কোড সংগ্রহ করুন।'
+        : 'পাসওয়ার্ড রিসেট কোড তৈরি হয়েছে।',
+      ...(isProdMode ? {} : { demoResetCode: code }),
       userCode: user.userCode,
     });
   });
 
   app.post('/api/auth/reset-password', (req, res) => {
+    const attemptKey = getClientAttemptKey(req, 'pwd-reset');
+    const rateCheck = userAttemptLimiter.check(attemptKey);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        error: `অতিরিক্ত ব্যর্থ চেষ্টার কারণে সাময়িকভাবে স্থগিত। ${rateCheck.retryAfterSeconds} সেকেন্ড পর আবার চেষ্টা করুন।`,
+        retryAfterSeconds: rateCheck.retryAfterSeconds,
+      });
+      return;
+    }
+
     const { identifier, code, newPassword } = req.body ?? {};
     if (!identifier || !code || !newPassword || String(newPassword).length < 6) {
       res.status(400).json({ error: 'সঠিক রিসেট কোড এবং কমপক্ষে ৬ অক্ষরের নতুন পাসওয়ার্ড দিন।' });
@@ -453,14 +495,17 @@ async function startServer() {
           normalizeBdPhone(u.phone) === normalizedPhone)
     );
     if (!user) {
+      userAttemptLimiter.recordFailure(attemptKey);
       res.status(404).json({ error: 'ব্যবহারকারী পাওয়া যায়নি।' });
       return;
     }
     const stored = db.resetCodes[user.id];
     if (!stored || stored.code !== String(code).trim() || stored.expiresAt < Date.now()) {
+      userAttemptLimiter.recordFailure(attemptKey);
       res.status(400).json({ error: 'রিসেট কোডটি সঠিক নয় অথবা মেয়াদ শেষ হয়ে গেছে।' });
       return;
     }
+    userAttemptLimiter.reset(attemptKey);
     user.passwordHash = hashPassword(String(newPassword));
     delete db.resetCodes[user.id];
     addActivity(user.name, user.role, 'পাসওয়ার্ড পরিবর্তন', 'রিসেট কোডের মাধ্যমে পাসওয়ার্ড হালনাগাদ');
@@ -1842,13 +1887,16 @@ async function startServer() {
     res.json({ settings: db.settings });
   });
 
+  app.all('/api/*', (_req, res) => {
+    res.status(404).json({ error: 'অনুরোধকৃত API রুট পাওয়া যায়নি।' });
+  });
+
   const httpServer = http.createServer(app);
 
   // ==========================================================================
   // VITE / STATIC SPA SERVING
   // ==========================================================================
-  const isProd = process.env.NODE_ENV === 'production';
-  if (!isProd) {
+  if (!isProdMode) {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
@@ -1872,7 +1920,7 @@ async function startServer() {
     });
   }
 
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`SHIKKHANIR server running on http://0.0.0.0:${PORT}`);
   });

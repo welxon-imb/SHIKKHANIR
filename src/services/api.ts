@@ -1,3 +1,9 @@
+import {
+  buildApiUrl,
+  classifyNonJsonApiResponse,
+  normalizeApiBase,
+} from '../utils/apiDiagnostics';
+
 let activeToken: string | null = null;
 
 export function setAuthToken(token: string | null) {
@@ -20,14 +26,14 @@ export class ApiError extends Error {
   }
 }
 
-const RAW_API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ?? '';
-const API_BASE = RAW_API_BASE.replace(/\/+$/, '');
+export const API_BASE_URL = normalizeApiBase(import.meta.env.VITE_API_BASE_URL as string | undefined);
+
+export function hasExternalApiBase(): boolean {
+  return API_BASE_URL.length > 0;
+}
 
 export function resolveApiUrl(path: string): string {
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path;
-  }
-  return API_BASE ? `${API_BASE}${path.startsWith('/') ? path : `/${path}`}` : path;
+  return buildApiUrl(path, API_BASE_URL);
 }
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -39,17 +45,27 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     headers.set('Authorization', `Bearer ${activeToken}`);
   }
 
-  const res = await fetch(resolveApiUrl(path), {
-    ...options,
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(resolveApiUrl(path), {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new ApiError(
+      'ব্যাকএন্ড সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি। সার্ভার চালু আছে কি না এবং CORS/API URL সঠিক কি না যাচাই করুন।',
+      0
+    );
+  }
 
   const contentType = res.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {
-    if (!res.ok) {
-      throw new ApiError(`সার্ভার সংযোগ পাওয়া যায়নি (${res.status})`, res.status);
-    }
-    throw new ApiError('ব্যাকএন্ড API সার্ভার সংযুক্ত নয়। অনুগ্রহ করে VITE_API_BASE_URL সেট করুন।', 503);
+    const diagnostic = classifyNonJsonApiResponse({
+      status: res.status,
+      apiBase: API_BASE_URL,
+      path,
+    });
+    throw new ApiError(diagnostic, !res.ok ? res.status : 503);
   }
 
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
