@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { HiddenAdminModal } from './components/HiddenAdminModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { TopHeaderBar } from './components/TopHeaderBar';
@@ -7,14 +8,15 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AdminDashboard } from './dashboards/AdminDashboard';
 import { StudentDashboard } from './dashboards/StudentDashboard';
 import { TeacherDashboard } from './dashboards/TeacherDashboard';
-import { DEFAULT_PUBLIC_BOOTSTRAP } from './data/defaultPublicBootstrap';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useSecretLogoTap } from './hooks/useSecretLogoTap';
+import { isSupabaseConfigured } from './lib/supabase';
 import { AdmissionPage } from './pages/AdmissionPage';
 import { LoginPage } from './pages/LoginPage';
 import { PublicHomePage, type PublicBootstrapData } from './pages/PublicHomePage';
 import { apiFetch } from './services/api';
 import type { AcademicClassId } from './types';
+import { isValidBootstrapPayload, normalizePublicBootstrapData } from './utils/bootstrapNormalizer';
 import {
   getPendingQueue,
   loadOfflinePublicCache,
@@ -27,7 +29,10 @@ type PublicView = 'home' | 'admission' | 'login';
 const AppShell: React.FC = () => {
   const { user, logout } = useAuth();
   const isOnline = useOnlineStatus();
-  const [publicData, setPublicData] = useState<PublicBootstrapData | null>(null);
+  const [publicData, setPublicData] = useState<PublicBootstrapData>(() => {
+    const cached = loadOfflinePublicCache<unknown>();
+    return normalizePublicBootstrapData(cached?.data, isSupabaseConfigured);
+  });
   const [view, setView] = useState<PublicView>('home');
   const [loginPortalHint, setLoginPortalHint] = useState<'TEACHER' | 'STUDENT' | undefined>(undefined);
   const [showHiddenAdminModal, setShowHiddenAdminModal] = useState(false);
@@ -44,16 +49,16 @@ const AppShell: React.FC = () => {
 
   const loadBootstrap = useCallback(async () => {
     try {
-      const data = await apiFetch<PublicBootstrapData>('/api/public/bootstrap');
-      setPublicData(data);
-      saveOfflinePublicCache(data);
-    } catch {
-      const cached = loadOfflinePublicCache<PublicBootstrapData>();
-      if (cached) {
-        setPublicData(cached.data);
-      } else {
-        setPublicData(DEFAULT_PUBLIC_BOOTSTRAP);
+      const data = await apiFetch<unknown>('/api/public/bootstrap');
+      if (!isValidBootstrapPayload(data)) {
+        throw new Error('Invalid bootstrap payload');
       }
+      const normalized = normalizePublicBootstrapData(data, isSupabaseConfigured);
+      setPublicData(normalized);
+      saveOfflinePublicCache(normalized);
+    } catch {
+      const cached = loadOfflinePublicCache<unknown>();
+      setPublicData(normalizePublicBootstrapData(cached?.data, isSupabaseConfigured));
     }
   }, []);
 
@@ -113,39 +118,6 @@ const AppShell: React.FC = () => {
     }
     handleNavigateHomeSection('top');
   };
-
-  if (!publicData) {
-    return (
-      <div className="min-h-screen bg-white flex flex-col">
-        <TopHeaderBar
-          user={user}
-          notices={[]}
-          onLogoTap={handleTopLogoTap}
-          onNavigateHomeSection={handleNavigateHomeSection}
-          onNavigateAdmission={() => {
-            setView('admission');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onNavigateLogin={(hint) => {
-            setLoginPortalHint(hint);
-            setView('login');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onLogout={logout}
-        />
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-3">
-          <div className="w-16 h-16 rounded-full border border-slate-200 overflow-hidden animate-pulse">
-            <img
-              src="/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg"
-              alt="শিক্ষানীর লোগো"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <p className="text-sm font-semibold text-[#0F2942]">শিক্ষানীর পোর্টাল লোড হচ্ছে...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -268,10 +240,12 @@ const AppShell: React.FC = () => {
 
 export default function App() {
   return (
-    <MotionConfig reducedMotion="user">
-      <AuthProvider>
-        <AppShell />
-      </AuthProvider>
-    </MotionConfig>
+    <ErrorBoundary>
+      <MotionConfig reducedMotion="user">
+        <AuthProvider>
+          <AppShell />
+        </AuthProvider>
+      </MotionConfig>
+    </ErrorBoundary>
   );
 }

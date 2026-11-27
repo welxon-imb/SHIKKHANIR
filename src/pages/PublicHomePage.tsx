@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowRight,
@@ -98,11 +98,17 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
 
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
   const [noticeFilter, setNoticeFilter] = useState<string>('ALL');
-  const [rankingExamId, setRankingExamId] = useState<string>(exams[0]?.id ?? '');
+  const [rankingExamId, setRankingExamId] = useState<string>(exams?.[0]?.id ?? '');
   const [contactForm, setContactForm] = useState({ name: '', phone: '', message: '' });
   const [contactStatus, setContactStatus] = useState<{ type: 'ok' | 'err'; msg: string } | null>(null);
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [mobileSection, setMobileSection] = useState<'top' | 'classes' | 'notices' | 'results'>('top');
+
+  useEffect(() => {
+    if (!exams.some((e) => e.id === rankingExamId) && exams[0]?.id) {
+      setRankingExamId(exams[0].id);
+    }
+  }, [exams, rankingExamId]);
 
   const handleMainLogoTap = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -517,7 +523,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 <Users className="w-6 h-6 text-[#0F2942] shrink-0" />
                 <div>
                   <p className="text-xl sm:text-2xl font-extrabold text-[#0F2942] tabular-nums leading-none">
-                    {settings.achievementStats.totalStudents}
+                    {settings.achievementStats?.totalStudents ?? '৫০০+'}
                   </p>
                   <p className="text-[11px] text-slate-600 mt-1">মোট শিক্ষার্থী</p>
                 </div>
@@ -527,7 +533,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 <UserCheck className="w-6 h-6 text-[#1D4ED8] shrink-0" />
                 <div>
                   <p className="text-xl sm:text-2xl font-extrabold text-[#0F2942] tabular-nums leading-none">
-                    {settings.achievementStats.experiencedTeachers}
+                    {settings.achievementStats?.experiencedTeachers ?? '১৮+'}
                   </p>
                   <p className="text-[11px] text-slate-600 mt-1">দক্ষ শিক্ষক</p>
                 </div>
@@ -537,7 +543,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 <Trophy className="w-6 h-6 text-[#C59B38] shrink-0" />
                 <div>
                   <p className="text-xl sm:text-2xl font-extrabold text-[#1D4ED8] tabular-nums leading-none">
-                    {settings.achievementStats.passRate}
+                    {settings.achievementStats?.passRate ?? '৯৮.৫%'}
                   </p>
                   <p className="text-[11px] text-slate-600 mt-1">সফলতার হার</p>
                 </div>
@@ -547,7 +553,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                 <Award className="w-6 h-6 text-[#C59B38] shrink-0" />
                 <div>
                   <p className="text-xl sm:text-2xl font-extrabold text-[#0F2942] tabular-nums leading-none">
-                    {settings.achievementStats.gpa5Count}
+                    {settings.achievementStats?.gpa5Count ?? '১২০+'}
                   </p>
                   <p className="text-[11px] text-slate-600 mt-1">জিপিএ-৫ অর্জন</p>
                 </div>
@@ -697,7 +703,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                       <p className="text-sm text-slate-600 mt-3 leading-relaxed">{t.bio}</p>
                     </div>
                     <div className="pt-4 mt-4 border-t border-slate-100 text-xs text-slate-500">
-                      অভিজ্ঞতা: {toBengaliDigits(t.experienceYears)} বছর · বিষয়: {t.subjects.join(', ')}
+                      অভিজ্ঞতা: {toBengaliDigits(t.experienceYears ?? 0)} বছর · বিষয়: {(t.subjects ?? []).join(', ')}
                     </div>
                   </div>
                 </motion.article>
@@ -815,7 +821,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                         মোট: {toBengaliDigits(r.totalObtained)} / {toBengaliDigits(r.totalFullMarks)}
                       </span>
                       <span className="font-bold text-emerald-700 tabular-nums">
-                        GPA {toBengaliDigits(r.gpa.toFixed(2))} ({r.grade})
+                        GPA {toBengaliDigits(Number(r.gpa ?? 0).toFixed(2))} ({r.grade})
                       </span>
                     </div>
                   </div>
@@ -855,7 +861,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-xs font-bold text-[#1D4ED8] tabular-nums">
-                          GPA {toBengaliDigits(r.gpa.toFixed(2))} ({r.grade})
+                          GPA {toBengaliDigits(Number(r.gpa ?? 0).toFixed(2))} ({r.grade})
                         </p>
                         <p className="text-xs font-semibold text-slate-600 tabular-nums mt-0.5">
                           {toBengaliDigits(r.totalObtained)} / {toBengaliDigits(r.totalFullMarks)}
@@ -902,7 +908,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
                             {toBengaliDigits(r.totalObtained)} / {toBengaliDigits(r.totalFullMarks)}
                           </td>
                           <td className="py-3 px-4 text-right font-bold text-[#1D4ED8] tabular-nums">
-                            {toBengaliDigits(r.gpa.toFixed(2))}
+                            {toBengaliDigits(Number(r.gpa ?? 0).toFixed(2))}
                           </td>
                           <td className="py-3 px-4 text-center font-bold text-emerald-700">{r.grade}</td>
                         </tr>

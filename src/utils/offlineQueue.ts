@@ -55,8 +55,22 @@ export function saveOfflinePublicCache(data: unknown): void {
 export function loadOfflinePublicCache<T>(): { savedAt: string; data: T } | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? (JSON.parse(raw) as { savedAt: string; data: T }) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object' || !('data' in parsed)) {
+      return null;
+    }
+    return parsed as { savedAt: string; data: T };
   } catch {
     return null;
   }
 }
+
+export function clearOfflinePublicCache(): void {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {
+    // ignore
+  }
+}
+

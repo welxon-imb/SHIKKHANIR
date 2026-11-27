@@ -12,7 +12,6 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
         manifest: {
           id: '/',
           name: 'শিক্ষানীর (SHIKKHANIR) — স্মার্ট কোচিং প্ল্যাটফর্ম',
@@ -45,9 +44,11 @@ export default defineConfig(() => {
           ],
         },
         workbox: {
+          cleanupOutdatedCaches: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-          navigateFallbackDenylist: [/^\/api\//],
+          navigateFallback: 'index.html',
+          navigateFallbackDenylist: [/^\/api\//, /^\/assets\//, /\/[^/?]+\.[^/]+$/],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -77,25 +78,10 @@ export default defineConfig(() => {
                 },
               },
             },
-            {
-              urlPattern: /\/api\/public\/.*/i,
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'shikkhanir-public-api-cache',
-                expiration: {
-                  maxEntries: 30,
-                  maxAgeSeconds: 60 * 60 * 24 * 7,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
           ],
         },
         devOptions: {
-          enabled: true,
-          type: 'module',
+          enabled: false,
         },
       }),
       // Copies src/assets into dist/ so root-relative URLs like
