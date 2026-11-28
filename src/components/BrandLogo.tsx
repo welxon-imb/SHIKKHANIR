@@ -15,20 +15,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 }) => {
   const sizeClass =
     size === 'sm'
-      ? 'w-9 h-9'
+      ? 'w-11 h-11'
       : size === 'lg'
-        ? 'w-14 h-14'
+        ? 'w-20 h-20'
         : size === 'xl'
-          ? 'w-20 h-20'
-          : 'w-11 h-11';
+          ? 'w-28 h-28'
+          : 'w-14 h-14';
 
   return (
     <div className="inline-flex items-center gap-3 shrink-0">
-      <div className={`${sizeClass} aspect-square shrink-0 rounded-full overflow-hidden bg-white border border-slate-200`}>
+      <div className={`${sizeClass} aspect-square shrink-0 rounded-full overflow-hidden bg-white border border-slate-200 shadow-xs`}>
         <img
           src={ORIGINAL_LOGO_SRC}
           alt="শিক্ষানীর (SHIKKHANIR) অফিসিয়াল লোগো"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover object-center translate-y-[0.35%] scale-[1.08] contrast-[1.18]"
           referrerPolicy="no-referrer"
         />
       </div>

@@ -29,6 +29,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
+import { BrandLogo } from '../components/BrandLogo';
 import { MessagingCenter } from '../components/MessagingCenter';
 import { PrintableMarksheet } from '../components/PrintableMarksheet';
 import { PrintableReceipt } from '../components/PrintableReceipt';
@@ -619,6 +620,7 @@ export const AdminDashboard: React.FC<{ onSettingsUpdated?: () => void }> = ({
           <button type="button" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="মেনু" className="lg:hidden p-2 rounded-lg border border-slate-200">
             <Menu className="w-5 h-5" />
           </button>
+          <BrandLogo size="sm" showText={false} />
           <span className="text-xs sm:text-sm font-bold text-[#0F2942]">অ্যাডমিন কন্ট্রোল প্যানেল</span>
         </div>
         <div className="flex items-center gap-3">

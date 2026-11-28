@@ -1,5 +1,6 @@
 import React from 'react';
 import { clearOfflinePublicCache } from '../utils/offlineQueue';
+import { ORIGINAL_LOGO_SRC } from './BrandLogo';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -45,11 +46,14 @@ export class ErrorBoundary extends React.Component<
       return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 text-slate-800">
           <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm text-center space-y-4">
-            <img
-              src="/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg"
-              alt="শিক্ষানীর লোগো"
-              className="w-16 h-16 rounded-full mx-auto border border-slate-200 object-contain"
-            />
+            <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border border-slate-200 bg-white shadow-xs">
+              <img
+                src={ORIGINAL_LOGO_SRC}
+                alt="শিক্ষানীর লোগো"
+                className="w-full h-full object-cover object-center translate-y-[0.35%] scale-[1.08] contrast-[1.18]"
+                referrerPolicy="no-referrer"
+              />
+            </div>
             <h1 className="text-lg font-bold text-[#0F2942]">
               পেজ লোড করতে সাময়িক সমস্যা হয়েছে
             </h1>

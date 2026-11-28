@@ -16,6 +16,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { BrandLogo } from '../components/BrandLogo';
 import { MessagingCenter } from '../components/MessagingCenter';
 import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../services/api';
@@ -289,6 +290,7 @@ export const TeacherDashboard: React.FC = () => {
           <button type="button" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="মেনু" className="lg:hidden p-2 rounded-lg border border-slate-200">
             <Menu className="w-5 h-5" />
           </button>
+          <BrandLogo size="sm" showText={false} />
           <span className="text-xs sm:text-sm font-bold text-[#0F2942]">শিক্ষক প্যানেল</span>
         </div>
         <div className="flex items-center gap-3">

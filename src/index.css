@@ -53,7 +53,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: clamp(50px, 6.2vw, 66px);
+  height: clamp(54px, 6.6vw, 72px);
   padding: 0 clamp(10px, 2.2vw, 26px);
   background: #ffffff;
   border: 2.5px solid #0047ff;
@@ -156,13 +156,13 @@
 }
 
 .shk-topbar-logo-ring {
-  width: clamp(38px, 5.2vw, 54px);
-  height: clamp(38px, 5.2vw, 54px);
+  width: clamp(44px, 5.6vw, 60px);
+  height: clamp(44px, 5.6vw, 60px);
   border-radius: 50%;
   background: #ffffff;
   border: 1.5px solid #04245c;
   box-shadow: 0 2px 10px rgba(4, 36, 92, 0.2);
-  padding: 2px;
+  padding: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -172,7 +172,10 @@
 .shk-topbar-logo-ring img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
+  transform: translateY(0.35%) scale(1.08);
+  filter: contrast(1.18);
   display: block;
 }
 
@@ -224,9 +227,14 @@
 
   .shk-topbar-pill {
     border-width: 2px;
-    height: 48px;
+    height: 54px;
     padding: 0 9px;
     gap: 5px;
+  }
+
+  .shk-topbar-logo-ring {
+    width: 44px;
+    height: 44px;
   }
 
   .shk-topbar-divider {
@@ -500,7 +508,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(120px, 14vw, 195px);
+  width: clamp(134px, 15.5vw, 218px);
   aspect-ratio: 1 / 1;
   background: transparent;
   border: 0;
@@ -524,7 +532,7 @@
 
 .shk-crest-seal {
   position: relative;
-  width: 66%;
+  width: 72%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: #ffffff;
@@ -533,14 +541,17 @@
     0 0 0 2px rgba(255, 232, 148, 0.7),
     0 10px 22px rgba(6, 26, 58, 0.2);
   overflow: hidden;
-  padding: 5%;
+  padding: 0;
   z-index: 2;
 }
 
 .shk-crest-seal img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
+  transform: translateY(0.35%) scale(1.08);
+  filter: contrast(1.18);
   display: block;
 }
 
@@ -654,7 +665,7 @@
 
 .shk-pencil-cup {
   position: relative;
-  width: clamp(68px, 7.6vw, 112px);
+  width: clamp(74px, 8.2vw, 122px);
   flex-shrink: 0;
   filter: drop-shadow(0 10px 12px rgba(8, 32, 74, 0.2));
 }
@@ -662,14 +673,14 @@
 .shk-cup-logo-seal {
   position: absolute;
   left: 50%;
-  bottom: 18%;
+  bottom: 15%;
   transform: translateX(-50%);
-  width: 52%;
+  width: 60%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: #ffffff;
-  border: 1px solid #d4d8e0;
-  padding: 3%;
+  border: 1px solid #cbd5e1;
+  padding: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -679,7 +690,10 @@
 .shk-cup-logo-seal img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
+  transform: translateY(0.35%) scale(1.08);
+  filter: contrast(1.18);
   display: block;
 }
 
@@ -703,7 +717,7 @@
   }
 
   .shk-crest-btn {
-    width: clamp(118px, 13.5vw, 158px);
+    width: clamp(128px, 14.5vw, 172px);
   }
 
   .shk-books-stack {
@@ -711,7 +725,7 @@
   }
 
   .shk-pencil-cup {
-    width: clamp(68px, 7.4vw, 96px);
+    width: clamp(72px, 8vw, 104px);
   }
 }
 
@@ -738,7 +752,7 @@
   }
 
   .shk-crest-btn {
-    width: clamp(92px, 14.5vw, 126px);
+    width: clamp(104px, 15.5vw, 138px);
   }
 
   .shk-hero-divider {
@@ -771,7 +785,7 @@
   }
 
   .shk-pencil-cup {
-    width: clamp(54px, 8.8vw, 76px);
+    width: clamp(58px, 9.2vw, 82px);
   }
 
   .shk-hero-campus-bg {
@@ -883,9 +897,9 @@
   }
 
   .shk-crest-btn {
-    width: clamp(56px, 16vw, 72px);
-    min-width: 56px;
-    min-height: 56px;
+    width: clamp(66px, 18.5vw, 80px);
+    min-width: 66px;
+    min-height: 66px;
   }
 
   .shk-crest-seal {
@@ -935,11 +949,11 @@
   }
 
   .shk-books-stack {
-    width: clamp(84px, 24vw, 112px);
+    width: clamp(82px, 23vw, 108px);
   }
 
   .shk-pencil-cup {
-    width: clamp(36px, 10vw, 48px);
+    width: clamp(42px, 11.5vw, 54px);
   }
 
   .shk-hero-tabletop {

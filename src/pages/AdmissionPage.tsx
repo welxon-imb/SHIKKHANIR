@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, CheckCircle2, Upload } from 'lucide-react';
+import { BrandLogo } from '../components/BrandLogo';
 import { apiFetch } from '../services/api';
 import { submitAdmissionToFirestore } from '../services/firestoreSync';
 import type { AcademicClass, AcademicClassId, AdmissionApplication, Batch } from '../types';
@@ -190,12 +191,15 @@ export const AdmissionPage: React.FC<AdmissionPageProps> = ({
           </div>
         ) : (
           <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-            <div className="border-b border-slate-200 pb-5 mb-6">
-              <p className="text-xs font-semibold text-[#C59B38]">শিক্ষানীর অনলাইন ভর্তি ফর্ম</p>
-              <h1 className="text-2xl font-bold text-[#0F2942] mt-1">নতুন শিক্ষার্থী ভর্তি আবেদন</h1>
-              <p className="text-xs text-slate-500 mt-1">
-                শিক্ষার্থীরা সরাসরি অ্যাকাউন্ট সক্রিয় করতে পারবেন না; অ্যাডমিনের অনুমোদনের পর স্টুডেন্ট অ্যাকাউন্ট চালু হবে।
-              </p>
+            <div className="border-b border-slate-200 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold text-[#C59B38]">শিক্ষানীর অনলাইন ভর্তি ফর্ম</p>
+                <h1 className="text-2xl font-bold text-[#0F2942] mt-1">নতুন শিক্ষার্থী ভর্তি আবেদন</h1>
+                <p className="text-xs text-slate-500 mt-1">
+                  শিক্ষার্থীরা সরাসরি অ্যাকাউন্ট সক্রিয় করতে পারবেন না; অ্যাডমিনের অনুমোদনের পর স্টুডেন্ট অ্যাকাউন্ট চালু হবে।
+                </p>
+              </div>
+              <BrandLogo size="md" showText={false} />
             </div>
 
             <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">

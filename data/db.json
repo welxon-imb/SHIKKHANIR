@@ -3316,6 +3316,14 @@
   ],
   "activityLogs": [
     {
+      "id": "log-97ea0eb7",
+      "actorName": "আরিফুল ইসলাম তানজিম",
+      "actorRole": "STUDENT",
+      "action": "সফল লগইন",
+      "details": "আইডি: SHK-2026-101",
+      "timestamp": "2026-11-28T07:40:56.616Z"
+    },
+    {
       "id": "log-1c684063",
       "actorName": "মোঃ মাহবুবুর রহমান",
       "actorRole": "TEACHER",

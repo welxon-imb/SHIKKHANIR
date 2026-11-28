@@ -115,8 +115,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4">
-      <div className="max-w-md w-full mx-auto space-y-6">
+    <div className="min-h-[calc(100vh-80px)] bg-slate-50 flex flex-col justify-center py-6 px-4">
+      <div className="max-w-md w-full mx-auto space-y-5">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -136,8 +136,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm space-y-6">
-          <div className="flex flex-col items-center text-center space-y-2">
-            <BrandLogo size="lg" showText={false} />
+          <div className="flex flex-col items-center text-center space-y-3">
+            <BrandLogo size="xl" showText={false} />
             <h1 className="text-xl font-bold text-[#0F2942]">
               {mode === 'login'
                 ? initialPortalHint === 'TEACHER'

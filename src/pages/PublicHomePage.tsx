@@ -1097,7 +1097,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({
       {/* 10. FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-8 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <BrandLogo size="md" subtitle={settings.tagline} />
+          <BrandLogo size="lg" subtitle={settings.tagline} />
           <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-slate-600">
             <a href="#classes" className="hover:text-[#0F2942]">কোর্সসমূহ</a>
             <a href="#notices" className="hover:text-[#0F2942]">নোটিশ</a>

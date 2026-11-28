@@ -18,6 +18,7 @@ import {
   User,
   X,
 } from 'lucide-react';
+import { BrandLogo, ORIGINAL_LOGO_SRC } from '../components/BrandLogo';
 import { MessagingCenter } from '../components/MessagingCenter';
 import { PrintableMarksheet } from '../components/PrintableMarksheet';
 import { PrintableReceipt } from '../components/PrintableReceipt';
@@ -281,6 +282,7 @@ export const StudentDashboard: React.FC<{ settings: WebsiteSettings }> = ({ sett
           >
             <Menu className="w-5 h-5" />
           </button>
+          <BrandLogo size="sm" showText={false} />
           <span className="text-xs sm:text-sm font-bold text-[#0F2942]">শিক্ষার্থী পোর্টাল</span>
         </div>
 
@@ -300,12 +302,18 @@ export const StudentDashboard: React.FC<{ settings: WebsiteSettings }> = ({ sett
           </button>
 
           <div className="hidden sm:flex items-center gap-2.5 pl-2 border-l border-slate-200">
-            <img
-              src={student.photoUrl || '/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg'}
-              alt={student.name}
-              className="w-8 h-8 rounded-full object-cover border border-slate-200"
-              referrerPolicy="no-referrer"
-            />
+            <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 bg-white shrink-0">
+              <img
+                src={student.photoUrl || ORIGINAL_LOGO_SRC}
+                alt={student.name}
+                className={
+                  student.photoUrl
+                    ? 'w-full h-full object-cover'
+                    : 'w-full h-full object-cover object-center translate-y-[0.35%] scale-[1.08] contrast-[1.18]'
+                }
+                referrerPolicy="no-referrer"
+              />
+            </div>
             <div className="text-left leading-tight">
               <p className="text-xs font-bold text-[#0F2942]">{student.name}</p>
               <p className="text-[11px] font-mono text-slate-500">{student.studentCode}</p>
@@ -388,12 +396,18 @@ export const StudentDashboard: React.FC<{ settings: WebsiteSettings }> = ({ sett
               {/* Student Profile Strip */}
               <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={student.photoUrl || '/assets/aistudio/58308189f4f51a82ecf9cadd15c397c1_5dfd1b78.jpg'}
-                    alt={student.name}
-                    className="w-14 h-14 rounded-full object-cover border border-slate-200 shrink-0"
-                    referrerPolicy="no-referrer"
-                  />
+                  <div className="w-16 h-16 rounded-full overflow-hidden border border-slate-200 bg-white shrink-0">
+                    <img
+                      src={student.photoUrl || ORIGINAL_LOGO_SRC}
+                      alt={student.name}
+                      className={
+                        student.photoUrl
+                          ? 'w-full h-full object-cover'
+                          : 'w-full h-full object-cover object-center translate-y-[0.35%] scale-[1.08] contrast-[1.18]'
+                      }
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
                   <div>
                     <h1 className="text-lg font-bold text-[#0F2942]">{student.name}</h1>
                     <p className="text-xs text-slate-500 mt-0.5 tabular-nums">
